@@ -1,34 +1,15 @@
 <?php include HEADER_TEMPLATE; ?>
 
 <div class="ui container">
-    <form class="ui form inverted" action="" method="POST">
+    <form class="ui form inverted segment" action="" method="POST">
         <h3 class="ui dividing header inverted"><?php echo $vars['tournament']->name; ?></h3>
-        <div class="ui cards">
+        <div class="ui segment inverted grey">
+            <h3>Premiação: <?php echo $vars['tournament']->prize; ?></h3>
+            <h3>Regra: <?php echo $vars['tournament']->rule; ?></h3>
+            <h3>Máxima pontuação: <?php echo $vars['tournament']->score; ?></h3>
+        </div>
+        <div class="ui cards" id="cards">
 
-            <?php foreach ($vars['tournament']->teams()->get() as $team) : ?>
-
-                <div class="card green">
-                    <div class="content">
-                        <div class="header">
-                            <?php echo $team->name; ?>
-                        </div>
-                        <div class="meta">
-                        </div>
-                        <div class="description">
-                            <?php echo $team->first_player; ?> / <?php echo $team->second_player; ?>
-                        </div>
-                    </div>
-                    <div class="extra content">
-                        <div class="field">
-                            <input type="number" name="score" placeholder="Pontuação" value="<?php echo $team->pivot->score ?>" id="<?php echo $team->id; ?>">
-                        </div>
-                        <div class="ui buttons">
-                            <div class="ui green inverted button" onclick="updateScore(<?php echo $vars['tournament']->id; ?>, <?php echo $team->id; ?>)">Salvar</div>
-                        </div>
-                    </div>
-                </div>
-
-            <?php endforeach; ?>
         </div>
         <br>
         <a class="ui button inverted red" type="buttton" href="/">Voltar</a>
@@ -39,6 +20,7 @@
 
 <script>
     function updateScore(tournament_id, team_id) {
+        Notiflix.Loading.Circle();
         let score = $('#' + team_id).val();
         console.log(tournament_id, team_id, score);
         $.ajax({
@@ -50,6 +32,7 @@
                 score
             },
             success: (msg) => {
+                refreshTeams();
                 msg = JSON.parse(msg);
                 console.log(msg);
                 if (msg == 'updated') {
@@ -58,14 +41,80 @@
                     msg.winner == true
                 ) {
                     Notiflix.Report.Success('Vencedor',
-                        msg.tournament.rule, 'Ok');
+                        msg.team, 'Ok');
 
                 }
             },
             error: (err) => {
+                Notiflix.Loading.Remove();
                 console.log(err);
             }
         });
 
+    }
+</script>
+
+<script>
+    $(window).ready(function() {
+        refreshTeams();
+    });
+
+    function refreshTeams() {
+        Notiflix.Loading.Circle();
+        var url = new URL(window.location.href);
+        var tournament_id = url.searchParams.get("id");
+        $.ajax({
+            url: '?r=/tournament/refresh_tournament',
+            method: 'GET',
+            data: {
+                tournament_id
+            },
+            success: (response) => {
+                response = JSON.parse(response);
+                console.log(response);
+                setTeams(response);
+                Notiflix.Loading.Remove();
+
+            },
+            error: (err) => {
+                Notiflix.Loading.Remove();
+                console.log(err);
+            }
+        });
+    }
+
+    function setTeams(tournament) {
+        $("#cards").empty();
+        let disabled = "";
+        if (tournament.status_id == 3) {
+            disabled = 'disabled';
+        }
+        var teams = tournament.teams;
+        var markup = `<div class="card grey">
+                        <div class="content">
+                            <div class="header">
+                                \${name} 
+                            </div>
+                            <div class="meta">
+                            </div>
+                            <div class="description">
+                                <h4> \${first_player} / \${second_player}</h4>
+                            </div>
+                        </div>
+                        <div class="ui segment inverted grey">
+                        <div class="field">
+                            <input ${disabled} type="number" name="score" placeholder="Pontuação" value="\${pivot.score}" id="\${id}">
+                        </div>
+                        <div  class="ui bottom attached button green ${disabled}" onclick="updateScore('${tournament.id}', '\${id}')">
+                            <i class="cloud upload icon"></i>
+                        </div>
+                    </div>
+                </div>`;
+
+
+        $.template("cardTemplate", markup);
+
+        $.tmpl("cardTemplate", teams)
+            .appendTo("#cards");
     }
 </script>

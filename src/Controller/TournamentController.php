@@ -57,11 +57,9 @@ class TournamentController extends Controller
         try {
 
             $id = self::params('id');
-            $tournament = Tournament::with(
-                'teams'
-            )->find($id);
+            $tournament = Tournament::find($id);
 
-            if ($tournament->count() > 0) {
+            if ($tournament) {
                 return self::view('tournament/show', ['tournament' => $tournament]);
             }
             throw new Exception('Torneio inválido');
@@ -70,6 +68,29 @@ class TournamentController extends Controller
             $_SESSION['ERROR'] = $th->getMessage();
             self::redirect('/');
         }
+    }
+
+
+    public function refresh_tournament()
+    {
+        try {
+            $id = self::params('tournament_id');
+            $tournament = Tournament::with(
+                ['teams' => function ($q) {
+                    $q->orderBy('score', 'desc');
+                }]
+
+            )->find($id);
+
+            if ($tournament->count() > 0) {
+                return json_encode($tournament);
+            }
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+
+
+        return json_encode(false);
     }
 
     public function update_score()
@@ -94,18 +115,20 @@ class TournamentController extends Controller
 
             // Vencedor
             if ($score >= $tournament->score) {
-                
+
                 // Atualizar tabela tournament
                 $tournament->update(['winner_id' => $team_id, 'status_id' => 3]);
                 // Retornar modelo vencedor
 
                 return json_encode([
                     'winner' => true,
-                    'tournament' => $tournament
+                    'team' => $tournament->winner->name
                 ]);
             }
 
-            return json_encode(true);
+            return json_encode([
+                'winner' => false
+            ]);
         } catch (\Throwable $th) {
             $error[] = $th->getMessage();
             return json_encode($error);

@@ -41,5 +41,9 @@ $app->post('/tournament/score', function () {
     return \App\Controller\TournamentController::update_score();
 });
 
+$app->get('/tournament/refresh_tournament', function () {
+    return \App\Controller\TournamentController::refresh_tournament();
+});
+
 
 $app->run();

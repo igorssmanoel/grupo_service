@@ -1,0 +1,27 @@
+{
+  "name": "grupo-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "file-uri-to-path": "^1.0.0",
+    "fsevents": "^1.2.11",
+    "jquery-templates": "^1.0.0",
+    "semantic-ui": "^2.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D0rm1nd0/grupo_service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/D0rm1nd0/grupo_service/issues"
+  },
+  "homepage": "https://github.com/D0rm1nd0/grupo_service#readme"
+}

@@ -41,15 +41,9 @@
           <td data-label="winner"><?php echo isset($tournament->winner) ? $tournament->winner->name : 'EM PROGRESSO'; ?></td>
           <td data-label="status"><?php echo $tournament->status->description ?></td>
           <td data-label="show">
-            <?php if ($tournament->status->description == 'FINALIZADO') : ?>
-
-              <i class="eye slash icon red"></i>
-
-            <?php else : ?>
-              <a href="<?php echo '?r=/tournament/show&id=' . $tournament->id; ?>">
-                <i class="eye icon green"></i>
-              </a>
-            <?php endif ?>
+            <a href="<?php echo '?r=/tournament/show&id=' . $tournament->id; ?>">
+              <i class="eye icon green"></i>
+            </a>
           </td>
         </tr>
       <?php endforeach; ?>
