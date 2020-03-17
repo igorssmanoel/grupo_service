@@ -22,8 +22,8 @@ class TournamentController extends Controller
 
         try {
             if ($validator->is_valid()) {
-                if (count($params['teams']) >  10) {
-                    throw new Exception('A quantidade máxima de times é 10.', 1);
+                if (count($params['teams']) >  MAX_TEAMS) {
+                    throw new Exception('A quantidade máxima de times é ' . MAX_TEAMS, 1);
                 }
                 $tournament = Tournament::create($params);
                 $tournament->teams()->sync($params['teams']);

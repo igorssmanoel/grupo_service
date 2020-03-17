@@ -19,7 +19,8 @@
         "bin-dir": "./bin"
     },
     "require": {
-        "illuminate/database": "^7.1"
+        "illuminate/database": "^7.1",
+        "vlucas/phpdotenv": "^4.1"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
