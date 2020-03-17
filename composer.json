@@ -20,5 +20,8 @@
     },
     "require": {
         "illuminate/database": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
     }
 }

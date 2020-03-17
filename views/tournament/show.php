@@ -7,9 +7,11 @@
             <h3>Premiação: <?php echo $vars['tournament']->prize; ?></h3>
             <h3>Regra: <?php echo $vars['tournament']->rule; ?></h3>
             <h3>Máxima pontuação: <?php echo $vars['tournament']->score; ?></h3>
+            <?php if ($vars['tournament']->status_id == 3) : ?>
+                <h2>VENCEDOR: <?php echo $vars['tournament']->winner->name; ?></h2>
+            <?php endif; ?>
         </div>
         <div class="ui cards" id="cards">
-
         </div>
         <br>
         <a class="ui button inverted red" type="buttton" href="/">Voltar</a>
@@ -22,7 +24,7 @@
     function updateScore(tournament_id, team_id) {
         Notiflix.Loading.Circle();
         let score = $('#' + team_id).val();
-        console.log(tournament_id, team_id, score);
+
         $.ajax({
             url: '?r=/tournament/score',
             method: 'POST',
@@ -34,7 +36,7 @@
             success: (msg) => {
                 refreshTeams();
                 msg = JSON.parse(msg);
-                console.log(msg);
+
                 if (msg == 'updated') {
                     Notiflix.Notify('Pontuação atualizada com sucesso');
                 } else if (
@@ -55,6 +57,7 @@
 </script>
 
 <script>
+    // Atualiza a lista dos times do campeonato
     $(window).ready(function() {
         refreshTeams();
     });
@@ -71,7 +74,6 @@
             },
             success: (response) => {
                 response = JSON.parse(response);
-                console.log(response);
                 setTeams(response);
                 Notiflix.Loading.Remove();
 
@@ -83,6 +85,7 @@
         });
     }
 
+    // Define o template dos cards com os times
     function setTeams(tournament) {
         $("#cards").empty();
         let disabled = "";
