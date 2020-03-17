@@ -1,1 +1,1 @@
-web: php -S 0.0.0.0 public/
+web: php -S localhost:80 /public
